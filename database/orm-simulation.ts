@@ -49,8 +49,6 @@ export class OrmSimulation {
 
       DATABASE[this.type].splice(eIndex, 1, updateEntity);
 
-      console.log(DATABASE[this.type]);
-
       return updateEntity;
     } else {
       return false;

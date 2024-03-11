@@ -19,8 +19,16 @@ import { UUID } from 'crypto';
 import { ErrorMessageDictionary } from '../../core/consts/error.dictionary';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 
-@ApiTags('Artist')
 @Controller('artist')
+@ApiTags('Artist')
+@ApiResponse({
+  status: HttpStatus.BAD_REQUEST,
+  description: ErrorMessageDictionary.invalidId,
+})
+@ApiResponse({
+  status: HttpStatus.NOT_FOUND,
+  description: ErrorMessageDictionary.notFound,
+})
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
 
@@ -77,7 +85,10 @@ export class ArtistController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Remove Artist by Id' })
-  @ApiResponse({ status: HttpStatus.NO_CONTENT })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: ErrorMessageDictionary.noContent,
+  })
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseUUIDPipe) id: UUID): void {
     const artist = this.artistService.remove(id);

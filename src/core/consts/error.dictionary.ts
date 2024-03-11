@@ -1,7 +1,9 @@
 export const ErrorMessageDictionary = {
   required: 'Property is required',
   badRequest: 'Bad request',
+  invalidId: 'Id is invalid',
   notFound: 'Entity not found',
+  noContent: 'No Content',
   wrongPassword: 'Wrong password',
   haveToBeNumber: 'Have to be a number',
   haveToBeString: 'Have to be a string',

@@ -19,8 +19,16 @@ import { Album } from './entities/album.entity';
 import { UUID } from 'crypto';
 import { ErrorMessageDictionary } from '../../core/consts/error.dictionary';
 
-@ApiTags('Album')
 @Controller('album')
+@ApiTags('Album')
+@ApiResponse({
+  status: HttpStatus.BAD_REQUEST,
+  description: ErrorMessageDictionary.invalidId,
+})
+@ApiResponse({
+  status: HttpStatus.NOT_FOUND,
+  description: ErrorMessageDictionary.notFound,
+})
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 
@@ -78,7 +86,10 @@ export class AlbumController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Remove Album by Id' })
-  @ApiResponse({ status: HttpStatus.NO_CONTENT })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: ErrorMessageDictionary.noContent,
+  })
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseUUIDPipe) id: UUID): void {
     const album = this.albumService.remove(id);

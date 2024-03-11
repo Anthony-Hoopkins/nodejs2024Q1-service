@@ -39,8 +39,6 @@ export class FavoritesService {
       }
     });
 
-    console.log(initCollection);
-
     return initCollection;
   }
 

@@ -19,8 +19,16 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UUID } from 'crypto';
 import { ErrorMessageDictionary } from '../../core/consts/error.dictionary';
 
-@ApiTags('Track')
 @Controller('track')
+@ApiTags('Track')
+@ApiResponse({
+  status: HttpStatus.BAD_REQUEST,
+  description: ErrorMessageDictionary.invalidId,
+})
+@ApiResponse({
+  status: HttpStatus.NOT_FOUND,
+  description: ErrorMessageDictionary.notFound,
+})
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}
 
@@ -77,7 +85,10 @@ export class TrackController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Remove Track by Id' })
-  @ApiResponse({ status: HttpStatus.NO_CONTENT })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: ErrorMessageDictionary.noContent,
+  })
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseUUIDPipe) id: UUID): void {
     const removedItem = this.trackService.remove(id);

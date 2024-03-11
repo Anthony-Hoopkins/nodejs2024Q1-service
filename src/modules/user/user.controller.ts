@@ -21,9 +21,17 @@ import { User } from './entities/user.entity';
 import { UUID } from 'crypto';
 import { ErrorMessageDictionary } from '../../core/consts/error.dictionary';
 
+@Controller('user')
 @ApiTags('User')
 @UseInterceptors(ClassSerializerInterceptor)
-@Controller('user')
+@ApiResponse({
+  status: HttpStatus.BAD_REQUEST,
+  description: ErrorMessageDictionary.invalidId,
+})
+@ApiResponse({
+  status: HttpStatus.NOT_FOUND,
+  description: ErrorMessageDictionary.notFound,
+})
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -61,6 +69,10 @@ export class UserController {
   @Put(':id')
   @ApiOperation({ summary: 'Update User by Id' })
   @ApiResponse({ status: HttpStatus.OK, type: User })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: ErrorMessageDictionary.wrongPassword,
+  })
   @HttpCode(HttpStatus.OK)
   update(
     @Param('id', ParseUUIDPipe) id: UUID,
@@ -86,7 +98,10 @@ export class UserController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Remove User by Id' })
-  @ApiResponse({ status: HttpStatus.NO_CONTENT })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: ErrorMessageDictionary.noContent,
+  })
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseUUIDPipe) id: UUID): void {
     const user = this.userService.remove(id);
