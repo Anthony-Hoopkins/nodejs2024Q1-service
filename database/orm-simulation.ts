@@ -9,7 +9,7 @@ export class OrmSimulation {
     this.type = _type;
   }
 
-  createEntity(dto: any, options?: { [key: string]: string }): any {
+  createEntity(dto: any): any {
     dto.id = crypto.randomUUID();
     dto.version = 1;
     const date = +new Date();
@@ -29,13 +29,17 @@ export class OrmSimulation {
     return DATABASE[this.type].find((entity) => entity.id === id);
   }
 
-  updateEntity(id: UUID, dto: unknown): unknown | false {
+  updateEntity(id: UUID, dto: any): unknown | false {
     const eIndex = DATABASE[this.type].findIndex((entity) => entity.id === id);
 
-    if (eIndex !== -1) {
-      DATABASE[this.type].splice(eIndex, 1, dto);
+    const updateEntity = { ...dto, updatedAt: +new Date(), version: dto.version + 1 };
 
-      return dto;
+    if (eIndex !== -1) {
+      DATABASE[this.type].splice(eIndex, 1, updateEntity);
+
+      console.log(DATABASE[this.type]);
+
+      return updateEntity;
     } else {
       return false;
     }
@@ -51,7 +55,5 @@ export class OrmSimulation {
     } else {
       return false;
     }
-
-    console.log(DATABASE);
   }
 }
