@@ -30,7 +30,7 @@ export class FavoritesController {
     return favs;
   }
 
-  @Post('/artist/:id')
+  @Post('artist/:id')
   @ApiOperation({ summary: 'Add track to the favorites ' })
   @ApiResponse({ status: HttpStatus.CREATED, type: Favorite })
   addArtist(@Param('id', ParseUUIDPipe) id: UUID) {
@@ -39,13 +39,13 @@ export class FavoritesController {
     this.handleResult(result);
   }
 
-  @Delete('/artist/:id')
+  @Delete('artist/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   removeArtist(@Param('id', ParseUUIDPipe) id: UUID) {
     return this.favoritesService.remove(id);
   }
 
-  @Post('/album/:id')
+  @Post('album/:id')
   @ApiOperation({ summary: 'Add track to the favorites ' })
   @ApiResponse({ status: HttpStatus.CREATED, type: Favorite })
   addAlbum(@Param('id', ParseUUIDPipe) id: UUID) {
@@ -54,13 +54,13 @@ export class FavoritesController {
     this.handleResult(result);
   }
 
-  @Delete('/album/:id')
+  @Delete('album/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   removeAlbum(@Param('id', ParseUUIDPipe) id: UUID) {
     return this.favoritesService.remove(id);
   }
 
-  @Post('/track/:id')
+  @Post('track/:id')
   @ApiOperation({ summary: 'Add track to the favorites ' })
   @ApiResponse({ status: HttpStatus.CREATED, type: Favorite })
   addTrack(@Param('id', ParseUUIDPipe) id: UUID) {
@@ -69,7 +69,7 @@ export class FavoritesController {
     this.handleResult(result);
   }
 
-  @Delete('/track/:id')
+  @Delete('track/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   removeTrack(@Param('id', ParseUUIDPipe) id: UUID) {
     return this.favoritesService.remove(id);

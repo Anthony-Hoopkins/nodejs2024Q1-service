@@ -8,6 +8,7 @@ import { UpdateArtistDto } from '../artist/dto/update-artist.dto';
 @Injectable()
 export class AlbumService {
   private orm = new OrmSimulation(OrmSimulation.entityTypes.Albums);
+  private trackOrm = new OrmSimulation(OrmSimulation.entityTypes.Tracks);
 
   create(createAlbumDto: CreateAlbumDto): Album {
     return this.orm.createEntity(createAlbumDto);
@@ -33,7 +34,16 @@ export class AlbumService {
   }
 
   remove(id: UUID) {
-    return this.orm.removeEntity(id);
-    //todo set track albumid = null;
+    const result = this.orm.removeEntity(id);
+
+    if (result) {
+      const track = this.trackOrm.getSingleEntityByCustomId('albumId', id);
+
+      if (track) {
+        track.albumId = null;
+      }
+    }
+
+    return result;
   }
 }

@@ -1,6 +1,5 @@
 import { DATABASE, EntityTypes } from './database';
 import { UUID } from 'crypto';
-import { CollectionTypes } from '../src/core/enums/collection-types';
 
 export class OrmSimulation {
   static entityTypes = EntityTypes;
@@ -28,6 +27,10 @@ export class OrmSimulation {
 
   getSingleEntity(id: UUID): any | undefined {
     return DATABASE[this.type].find((entity) => entity.id === id);
+  }
+
+  getSingleEntityByCustomId(propName: string, propId: UUID): any | undefined {
+    return DATABASE[this.type].find((entity) => entity[propName] === propId);
   }
 
   updateEntity(id: UUID, dto: any): unknown | false {
@@ -66,9 +69,9 @@ export class OrmSimulation {
     }
   }
 
-  setEntityToCollection(type: CollectionTypes, id: UUID): any {
-    DATABASE[this.type].push({ id, type });
+  setEntityToCollection<T>(entity: T): T {
+    DATABASE[this.type].push(entity);
 
-    return { id, type };
+    return entity;
   }
 }

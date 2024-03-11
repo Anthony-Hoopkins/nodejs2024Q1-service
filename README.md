@@ -17,7 +17,9 @@ git clone {repository URL}
 npm install
 ```
 
-## Running application
+### Rename ".env.example" to ".env" or just use current
+
+## Run application
 
 ```
 npm start
@@ -31,7 +33,7 @@ For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
 After application running open new terminal and enter:
 
-To run all tests without authorization
+To run all tests without authorization (for current part 1)
 
 ```
 npm run test

@@ -8,6 +8,8 @@ import { UUID } from 'crypto';
 @Injectable()
 export class ArtistService {
   private orm = new OrmSimulation(OrmSimulation.entityTypes.Artists);
+  private albumOrm = new OrmSimulation(OrmSimulation.entityTypes.Albums);
+  private trackOrm = new OrmSimulation(OrmSimulation.entityTypes.Tracks);
 
   create(createArtistDto: CreateArtistDto): Artist {
     return this.orm.createEntity(createArtistDto);
@@ -33,9 +35,21 @@ export class ArtistService {
   }
 
   remove(id: UUID) {
-    // todo set album artistId to null after deletion
-    // todo set track artistId to null after deletion
+    const result = this.orm.removeEntity(id);
 
-    return this.orm.removeEntity(id);
+    if (result) {
+      const album = this.albumOrm.getSingleEntityByCustomId('artistId', id);
+      const track = this.trackOrm.getSingleEntityByCustomId('artistId', id);
+
+      if (album) {
+        album.artistId = null;
+      }
+
+      if (track) {
+        track.artistId = null;
+      }
+    }
+
+    return result;
   }
 }
