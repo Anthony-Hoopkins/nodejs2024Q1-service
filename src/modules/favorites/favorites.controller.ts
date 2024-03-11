@@ -22,6 +22,8 @@ export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Get All Favorites' })
+  @ApiResponse({ status: HttpStatus.OK, type: [Favorite] })
   findAll() {
     const favs = this.favoritesService.findAll();
 
@@ -31,8 +33,8 @@ export class FavoritesController {
   }
 
   @Post('artist/:id')
-  @ApiOperation({ summary: 'Add track to the favorites ' })
-  @ApiResponse({ status: HttpStatus.CREATED, type: Favorite })
+  @ApiOperation({ summary: 'Add artist to the favorites' })
+  @ApiResponse({ status: HttpStatus.CREATED })
   addArtist(@Param('id', ParseUUIDPipe) id: UUID) {
     const result = this.favoritesService.addEntity(CollectionTypes.Artists, id);
 
@@ -46,8 +48,8 @@ export class FavoritesController {
   }
 
   @Post('album/:id')
-  @ApiOperation({ summary: 'Add track to the favorites ' })
-  @ApiResponse({ status: HttpStatus.CREATED, type: Favorite })
+  @ApiOperation({ summary: 'Add album to the favorites' })
+  @ApiResponse({ status: HttpStatus.CREATED })
   addAlbum(@Param('id', ParseUUIDPipe) id: UUID) {
     const result = this.favoritesService.addEntity(CollectionTypes.Albums, id);
 
@@ -61,8 +63,8 @@ export class FavoritesController {
   }
 
   @Post('track/:id')
-  @ApiOperation({ summary: 'Add track to the favorites ' })
-  @ApiResponse({ status: HttpStatus.CREATED, type: Favorite })
+  @ApiOperation({ summary: 'Add track to the favorites' })
+  @ApiResponse({ status: HttpStatus.CREATED })
   addTrack(@Param('id', ParseUUIDPipe) id: UUID) {
     const result = this.favoritesService.addEntity(CollectionTypes.Tracks, id);
 

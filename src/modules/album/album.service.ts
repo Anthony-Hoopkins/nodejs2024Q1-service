@@ -3,7 +3,7 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { OrmSimulation } from '../../../database/orm-simulation';
 import { Album } from './entities/album.entity';
 import { UUID } from 'crypto';
-import { UpdateArtistDto } from '../artist/dto/update-artist.dto';
+import { UpdateAlbumDto } from './dto/update-album.dto';
 
 @Injectable()
 export class AlbumService {
@@ -24,7 +24,7 @@ export class AlbumService {
 
   update(
     id: UUID,
-    updateAlbumDto: UpdateArtistDto,
+    updateAlbumDto: UpdateAlbumDto,
   ): { result: HttpStatus; data?: any } {
     const updateAlb = this.orm.updateEntity(id, updateAlbumDto);
 

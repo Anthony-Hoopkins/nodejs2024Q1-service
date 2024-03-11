@@ -4,6 +4,9 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
+  console.log(process.env.NODE_ENV);
+  console.log(process.env.PORT);
+
   const PORT = process.env.PORT || 4000;
   const app = await NestFactory.create(AppModule);
 

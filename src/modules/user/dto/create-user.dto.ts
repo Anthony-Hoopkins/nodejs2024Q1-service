@@ -8,6 +8,7 @@ export class CreateUserDto {
   @IsNotEmpty({ message: ErrorMessageDictionary.required })
   login: string;
 
+  @ApiProperty({ example: '123qwerty', description: 'password' })
   @IsNotEmpty({ message: ErrorMessageDictionary.required })
   password: string;
 }
