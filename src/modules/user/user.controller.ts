@@ -30,7 +30,6 @@ export class UserController {
   @ApiOperation({ summary: 'Create User' })
   @ApiResponse({ status: HttpStatus.CREATED, type: User })
   @Post()
-  // @HttpCode(204)
   create(@Body() createUserDto: CreateUserDto) {
     return new User(this.userService.create(createUserDto));
   }
@@ -65,9 +64,9 @@ export class UserController {
   @Put(':id')
   update(
     @Param('id', ParseUUIDPipe) id: UUID,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() updateDto: UpdateUserDto,
   ): User {
-    const result = this.userService.update(id, updateUserDto);
+    const result = this.userService.update(id, updateDto);
 
     switch (result.result) {
       case HttpStatus.OK:

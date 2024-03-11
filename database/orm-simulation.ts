@@ -32,9 +32,17 @@ export class OrmSimulation {
   updateEntity(id: UUID, dto: any): unknown | false {
     const eIndex = DATABASE[this.type].findIndex((entity) => entity.id === id);
 
-    const updateEntity = { ...dto, updatedAt: +new Date(), version: dto.version + 1 };
-
     if (eIndex !== -1) {
+      const entityForUpdate = DATABASE[this.type][eIndex];
+
+      const updateEntity = {
+        ...entityForUpdate,
+        ...dto,
+        updatedAt: +new Date(),
+        version: entityForUpdate.version + 1,
+        id,
+      };
+
       DATABASE[this.type].splice(eIndex, 1, updateEntity);
 
       console.log(DATABASE[this.type]);
