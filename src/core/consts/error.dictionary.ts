@@ -9,4 +9,5 @@ export const ErrorMessageDictionary = {
   haveToBeUUID: 'Have to be a UUID',
   incorrectUserCredentials: 'Incorrect user credentials',
   somethingWrong: 'Something went wrong',
+  unprocessableEntity: 'Unprocessable Entity',
 };

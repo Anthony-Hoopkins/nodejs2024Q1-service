@@ -1,5 +1,6 @@
 import { DATABASE, EntityTypes } from './database';
 import { UUID } from 'crypto';
+import { CollectionTypes } from '../src/core/enums/collection-types';
 
 export class OrmSimulation {
   static entityTypes = EntityTypes;
@@ -63,5 +64,11 @@ export class OrmSimulation {
     } else {
       return false;
     }
+  }
+
+  setEntityToCollection(type: CollectionTypes, id: UUID): any {
+    DATABASE[this.type].push({ id, type });
+
+    return { id, type };
   }
 }

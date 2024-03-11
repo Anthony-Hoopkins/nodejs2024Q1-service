@@ -45,7 +45,6 @@ export class AlbumController {
   findOne(@Param('id', ParseUUIDPipe) id: UUID) {
     const album = this.albumService.findOne(id);
 
-    console.log(album);
     if (album) {
       return album;
     }

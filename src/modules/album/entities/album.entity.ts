@@ -7,7 +7,7 @@ export class Album extends BaseEntity {
   @ApiProperty({ example: 'My dear hare', description: 'Album name' })
   name: string;
 
-  @ApiProperty({ example: 1710152428565, description: 'updatedAt' })
+  @ApiProperty({ example: 2017, description: 'Year of creation' })
   year: number;
 
   @ApiProperty({ example: randomUUID, description: 'Uniq Artist ID' })

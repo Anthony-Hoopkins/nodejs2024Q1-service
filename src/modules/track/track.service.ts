@@ -1,26 +1,38 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
+import { Track } from './entities/track.entity';
+import { OrmSimulation } from '../../../database/orm-simulation';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class TrackService {
-  create(createTrackDto: CreateTrackDto) {
-    return 'This action adds a new track';
+  private orm = new OrmSimulation(OrmSimulation.entityTypes.Tracks);
+
+  create(createTrackDto: CreateTrackDto): Track {
+    return this.orm.createEntity(createTrackDto);
   }
 
   findAll() {
-    return `This action returns all track`;
+    return this.orm.getAllEntities();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} track`;
+  findOne(id: UUID): Track {
+    return this.orm.getSingleEntity(id);
   }
 
-  update(id: number, updateTrackDto: UpdateTrackDto) {
-    return `This action updates a #${id} track`;
+  update(
+    id: UUID,
+    updateTrackDto: UpdateTrackDto,
+  ): { result: HttpStatus; data?: any } {
+    const updateItem = this.orm.updateEntity(id, updateTrackDto);
+
+    return updateItem
+      ? { result: HttpStatus.OK, data: updateItem }
+      : { result: HttpStatus.NOT_FOUND };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} track`;
+  remove(id: UUID) {
+    return this.orm.removeEntity(id);
   }
 }
