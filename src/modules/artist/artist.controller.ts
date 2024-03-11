@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseUUIDPipe, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -10,26 +22,25 @@ import { UpdateArtistDto } from './dto/update-artist.dto';
 @ApiTags('Artist')
 @Controller('artist')
 export class ArtistController {
-  constructor(private readonly artistService: ArtistService) {
-  }
+  constructor(private readonly artistService: ArtistService) {}
 
+  @Post()
   @ApiOperation({ summary: 'Create Artist' })
   @ApiResponse({ status: HttpStatus.CREATED, type: Artist })
-  @Post()
   create(@Body() createArtistDto: CreateArtistDto) {
     return this.artistService.create(createArtistDto);
   }
 
+  @Get()
   @ApiOperation({ summary: 'Get All Artists' })
   @ApiResponse({ status: HttpStatus.OK, type: [Artist] })
-  @Get()
   findAll() {
     return this.artistService.findAll();
   }
 
+  @Get(':id')
   @ApiOperation({ summary: 'Get Artist by Id' })
   @ApiResponse({ status: HttpStatus.OK, type: Artist })
-  @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: UUID) {
     const artist = this.artistService.findOne(id);
 
@@ -43,10 +54,10 @@ export class ArtistController {
     );
   }
 
+  @Put(':id')
   @ApiOperation({ summary: 'Update Artist by Id' })
   @ApiResponse({ status: HttpStatus.OK, type: Artist })
   @HttpCode(HttpStatus.OK)
-  @Put(':id')
   update(
     @Param('id', ParseUUIDPipe) id: UUID,
     @Body() updateDto: UpdateArtistDto,
@@ -64,10 +75,10 @@ export class ArtistController {
     }
   }
 
+  @Delete(':id')
   @ApiOperation({ summary: 'Remove Artist by Id' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete(':id')
   remove(@Param('id', ParseUUIDPipe) id: UUID): void {
     const artist = this.artistService.remove(id);
 

@@ -27,7 +27,9 @@ export class ArtistService {
   ): { result: HttpStatus; data?: any } {
     const updateArt = this.orm.updateEntity(id, updateArtistDto);
 
-    return updateArt ? { result: HttpStatus.OK, data: updateArt } : { result: HttpStatus.NOT_FOUND };
+    return updateArt
+      ? { result: HttpStatus.OK, data: updateArt }
+      : { result: HttpStatus.NOT_FOUND };
   }
 
   remove(id: UUID) {

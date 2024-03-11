@@ -6,6 +6,7 @@ export const ErrorMessageDictionary = {
   haveToBeNumber: 'Have to be a number',
   haveToBeString: 'Have to be a string',
   haveToBeBoolean: 'Have to be a boolean',
+  haveToBeUUID: 'Have to be a UUID',
   incorrectUserCredentials: 'Incorrect user credentials',
   somethingWrong: 'Something went wrong',
 };

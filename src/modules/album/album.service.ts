@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
-import { UpdateAlbumDto } from './dto/update-album.dto';
+import { OrmSimulation } from '../../../database/orm-simulation';
+import { Album } from './entities/album.entity';
+import { UUID } from 'crypto';
+import { UpdateArtistDto } from '../artist/dto/update-artist.dto';
 
 @Injectable()
 export class AlbumService {
-  create(createAlbumDto: CreateAlbumDto) {
-    return 'This action adds a new album';
+  private orm = new OrmSimulation(OrmSimulation.entityTypes.Albums);
+
+  create(createAlbumDto: CreateAlbumDto): Album {
+    return this.orm.createEntity(createAlbumDto);
   }
 
-  findAll() {
-    return `This action returns all album`;
+  findAll(): Album {
+    return this.orm.getAllEntities();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} album`;
+  findOne(id: UUID): Album {
+    return this.orm.getSingleEntity(id);
   }
 
-  update(id: number, updateAlbumDto: UpdateAlbumDto) {
-    return `This action updates a #${id} album`;
+  update(
+    id: UUID,
+    updateAlbumDto: UpdateArtistDto,
+  ): { result: HttpStatus; data?: any } {
+    const updateAlb = this.orm.updateEntity(id, updateAlbumDto);
+
+    return updateAlb
+      ? { result: HttpStatus.OK, data: updateAlb }
+      : { result: HttpStatus.NOT_FOUND };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} album`;
+  remove(id: UUID) {
+    return this.orm.removeEntity(id);
+    //todo set track albumid = null;
   }
 }

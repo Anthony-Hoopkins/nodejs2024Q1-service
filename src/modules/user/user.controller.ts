@@ -27,24 +27,24 @@ import { ErrorMessageDictionary } from '../../core/consts/error.dictionary';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Post()
   @ApiOperation({ summary: 'Create User' })
   @ApiResponse({ status: HttpStatus.CREATED, type: User })
-  @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return new User(this.userService.create(createUserDto));
   }
 
+  @Get()
   @ApiOperation({ summary: 'Get All Users' })
   @ApiResponse({ status: HttpStatus.OK, type: [User] })
-  @Get()
   findAll() {
     const allUsers: User[] = this.userService.findAll();
     return allUsers.map((user: User) => new User(user));
   }
 
+  @Get(':id')
   @ApiOperation({ summary: 'Get User by Id' })
   @ApiResponse({ status: HttpStatus.OK, type: User })
-  @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: UUID) {
     const user = this.userService.findOne(id);
 
@@ -58,10 +58,10 @@ export class UserController {
     );
   }
 
+  @Put(':id')
   @ApiOperation({ summary: 'Update User by Id' })
   @ApiResponse({ status: HttpStatus.OK, type: User })
   @HttpCode(HttpStatus.OK)
-  @Put(':id')
   update(
     @Param('id', ParseUUIDPipe) id: UUID,
     @Body() updateDto: UpdateUserDto,
@@ -84,10 +84,10 @@ export class UserController {
     }
   }
 
+  @Delete(':id')
   @ApiOperation({ summary: 'Remove User by Id' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete(':id')
   remove(@Param('id', ParseUUIDPipe) id: UUID): void {
     const user = this.userService.remove(id);
 
