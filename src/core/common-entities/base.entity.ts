@@ -1,15 +1,35 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { randomUUID } from '../consts/misc';
-import { UUID } from 'crypto';
+import {
+  Column,
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 export class BaseEntity {
   @ApiProperty({ example: randomUUID, description: 'Uniq ID' })
-  id: UUID;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @ApiProperty({ example: 1, description: 'version' })
+  @Column({ default: 1 })
+  version: number; // integer number, increments on update
 
   @ApiProperty({ example: 1710152428565, description: 'createdAt' })
-  createdAt: number;
+  // @Column({ type: 'bigint' })
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
+
   @ApiProperty({ example: 1710152428565, description: 'updatedAt' })
-  updatedAt: number;
-  @ApiProperty({ example: 1, description: 'version' })
-  version: number; // integer number, increments on update
+  // @Column({ type: 'bigint' })
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
+
+  //
+  // @Column({ type: 'timestamp' })
+  // createdAt: Date;
+  //
+  // @Column({ type: 'timestamp' })
+  // updatedAt: Date;
 }

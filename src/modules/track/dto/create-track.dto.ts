@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import { ErrorMessageDictionary } from '../../../core/consts/error.dictionary';
 import { UUID } from 'crypto';
 import { ApiProperty } from '@nestjs/swagger';
@@ -16,8 +22,12 @@ export class CreateTrackDto {
   duration: number;
 
   @ApiProperty({ example: randomUUID, description: 'Artist Id' })
+  @IsUUID()
+  @IsOptional()
   artistId: UUID | null;
 
   @ApiProperty({ example: randomUUID, description: 'Album Id' })
+  @IsUUID()
+  @IsOptional()
   albumId: UUID | null;
 }

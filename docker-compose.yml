@@ -1,0 +1,39 @@
+version: '3.0'
+
+services:
+  app:
+    container_name: app_home_lib
+    build:
+      context: .
+      dockerfile: Dockerfile-app.dev
+    env_file:
+      - .env
+    #    volumes:
+    #      - .:/app
+    #      - /app/node_modules
+#    ports:
+#      - 5000:5000
+    #      - 9229:9229
+    command: npm run start:dev
+    depends_on:
+      - postgres_homelib
+    restart: always
+
+  postgres_homelib:
+    build:
+      context: .
+      dockerfile: Dockerfile-db.dev
+    container_name: home-lib-postgres-container
+    env_file:
+      - .env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+#    logging:
+#      driver: none
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    restart: always
+volumes:
+  pgdata:
