@@ -5,6 +5,7 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
 import { User } from '../modules/user/entities/user.entity';
 import { Artist } from '../modules/artist/entities/artist.entity';
 import { Album } from '../modules/album/entities/album.entity';
+import { Track } from '../modules/track/entities/track.entity';
 
 config();
 
@@ -32,7 +33,7 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   username: process.env.POSTGRES_USER,
   password: String(process.env.POSTGRES_PASSWORD),
   database: process.env.POSTGRES_DB,
-  entities: [User, Artist, Album],
+  entities: [User, Artist, Album, Track],
   // entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   synchronize: true, // WARNING Setting synchronize: true shouldn't be used in production - otherwise you can lose production data.
   migrationsRun: false,

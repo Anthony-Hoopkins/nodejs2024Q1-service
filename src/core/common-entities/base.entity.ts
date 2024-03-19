@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { randomUUID } from '../consts/misc';
+import { exampleUUID } from '../consts/misc';
 import { Column, PrimaryGeneratedColumn } from 'typeorm';
 
 export class BaseEntity {
-  @ApiProperty({ example: randomUUID, description: 'Uniq ID' })
+  @ApiProperty({ example: exampleUUID, description: 'Uniq ID' })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

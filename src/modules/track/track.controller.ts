@@ -30,12 +30,13 @@ import { ErrorMessageDictionary } from '../../core/consts/error.dictionary';
   description: ErrorMessageDictionary.notFound,
 })
 export class TrackController {
-  constructor(private readonly trackService: TrackService) {}
+  constructor(private readonly trackService: TrackService) {
+  }
 
   @Post()
   @ApiOperation({ summary: 'Create Track' })
   @ApiResponse({ status: HttpStatus.CREATED, type: Track })
-  create(@Body() createTrackDto: CreateTrackDto): Track {
+  async create(@Body() createTrackDto: CreateTrackDto): Promise<Track> {
     return this.trackService.create(createTrackDto);
   }
 
@@ -49,8 +50,8 @@ export class TrackController {
   @Get(':id')
   @ApiOperation({ summary: 'Get Track by Id' })
   @ApiResponse({ status: HttpStatus.OK, type: Track })
-  findOne(@Param('id', ParseUUIDPipe) id: UUID) {
-    const oneItem = this.trackService.findOne(id);
+  async findOne(@Param('id', ParseUUIDPipe) id: UUID): Promise<Track> {
+    const oneItem = await this.trackService.findOne(id);
 
     if (oneItem) {
       return oneItem;
@@ -66,11 +67,11 @@ export class TrackController {
   @ApiOperation({ summary: 'Update Track by Id' })
   @ApiResponse({ status: HttpStatus.OK, type: Track })
   @HttpCode(HttpStatus.OK)
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: UUID,
     @Body() updateDto: UpdateTrackDto,
-  ): Track {
-    const result = this.trackService.update(id, updateDto);
+  ): Promise<Track> {
+    const result = await this.trackService.update(id, updateDto);
 
     switch (result.result) {
       case HttpStatus.OK:
@@ -90,8 +91,8 @@ export class TrackController {
     description: ErrorMessageDictionary.noContent,
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', ParseUUIDPipe) id: UUID): void {
-    const removedItem = this.trackService.remove(id);
+  async remove(@Param('id', ParseUUIDPipe) id: UUID): Promise<void> {
+    const removedItem = await this.trackService.remove(id);
 
     if (removedItem) {
       return;

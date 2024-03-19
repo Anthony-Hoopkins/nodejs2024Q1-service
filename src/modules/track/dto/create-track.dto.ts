@@ -8,7 +8,7 @@ import {
 import { ErrorMessageDictionary } from '../../../core/consts/error.dictionary';
 import { UUID } from 'crypto';
 import { ApiProperty } from '@nestjs/swagger';
-import { randomUUID } from '../../../core/consts/misc';
+import { exampleUUID } from '../../../core/consts/misc';
 
 export class CreateTrackDto {
   @ApiProperty({ example: 'Go to the horizon', description: 'Name' })
@@ -21,12 +21,12 @@ export class CreateTrackDto {
   @IsNumber({}, { message: ErrorMessageDictionary.haveToBeNumber })
   duration: number;
 
-  @ApiProperty({ example: randomUUID, description: 'Artist Id' })
+  @ApiProperty({ example: exampleUUID, description: 'Artist Id' })
   @IsUUID()
   @IsOptional()
   artistId: UUID | null;
 
-  @ApiProperty({ example: randomUUID, description: 'Album Id' })
+  @ApiProperty({ example: exampleUUID, description: 'Album Id' })
   @IsUUID()
   @IsOptional()
   albumId: UUID | null;

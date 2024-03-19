@@ -55,7 +55,7 @@ export class UserService {
     return { result: HttpStatus.OK, data: updateUser };
   }
 
-  async remove(id: UUID): Promise<any> {
+  async remove(id: UUID): Promise<boolean> {
     return (await this.usersRepository.delete(id))?.affected > 0;
   }
 }

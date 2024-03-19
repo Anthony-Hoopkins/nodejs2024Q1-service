@@ -5,6 +5,7 @@ import { UUID } from 'crypto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { TrackService } from '../track/track.service';
 
 @Injectable()
 export class AlbumService {
@@ -13,6 +14,7 @@ export class AlbumService {
   constructor(
     @InjectRepository(Album)
     private albumRepository: Repository<Album>,
+    private readonly trackService: TrackService,
   ) {}
 
   create(createAlbumDto: CreateAlbumDto): Promise<Album> {
@@ -33,8 +35,6 @@ export class AlbumService {
   ): Promise<{ result: HttpStatus; data?: any }> {
     const result = await this.albumRepository.update(id, updateAlbumDto);
 
-    console.log(updateAlbumDto);
-
     return result.affected > 0
       ? { result: HttpStatus.OK, data: { ...updateAlbumDto, id } }
       : { result: HttpStatus.NOT_FOUND };
@@ -45,10 +45,7 @@ export class AlbumService {
     console.log(result);
 
     if (result.affected > 0) {
-      // const track = this.trackOrm.getSingleEntityByCustomId('albumId', id);
-      // if (track) {
-      //   track.albumId = null;
-      // }
+      await this.trackService.setPropAsNull('albumId', id);
     }
 
     return result.affected > 0;

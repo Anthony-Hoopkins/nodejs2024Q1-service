@@ -16,3 +16,8 @@ jest.config.js
 # docker
 Dockerfile
 docker-compose.yml
+
+# misc
+/data
+/database
+/docs_for_example

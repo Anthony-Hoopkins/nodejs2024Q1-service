@@ -2,37 +2,50 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
-import { OrmWrapper } from '../../../database/orm-wrapper';
 import { UUID } from 'crypto';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class TrackService {
-  private orm = new OrmWrapper(OrmWrapper.entityTypes.Tracks);
-
-  create(createTrackDto: CreateTrackDto): Track {
-    return this.orm.createEntity(createTrackDto);
+  constructor(
+    @InjectRepository(Track)
+    private trackRepository: Repository<Track>) {
   }
 
-  findAll() {
-    return this.orm.getAllEntities();
+  create(createTrackDto: CreateTrackDto): Promise<Track> {
+    return this.trackRepository.save(createTrackDto);
   }
 
-  findOne(id: UUID): Track {
-    return this.orm.getSingleEntity(id);
+  findAll(): Promise<Track[]> {
+    return this.trackRepository.find();
   }
 
-  update(
+  findOne(id: UUID): Promise<Track> {
+    return this.trackRepository.findOneBy({ id });
+  }
+
+  async setPropAsNull(propName: string, id: UUID): Promise<void> {
+    const track = await this.trackRepository.findOneBy({ [propName]: id });
+
+
+    if (track) {
+      await this.update(track.id as UUID, { [propName]: null } as UpdateTrackDto);
+    }
+  }
+
+  async update(
     id: UUID,
     updateTrackDto: UpdateTrackDto,
-  ): { result: HttpStatus; data?: any } {
-    const updateItem = this.orm.updateEntity(id, updateTrackDto);
+  ): Promise<{ result: HttpStatus; data?: any }> {
+    const result = await this.trackRepository.update(id, updateTrackDto);
 
-    return updateItem
-      ? { result: HttpStatus.OK, data: updateItem }
+    return result.affected > 0
+      ? { result: HttpStatus.OK, data: { ...updateTrackDto, id } }
       : { result: HttpStatus.NOT_FOUND };
   }
 
-  remove(id: UUID) {
-    return this.orm.removeEntity(id);
+  async remove(id: UUID): Promise<boolean> {
+    return (await this.trackRepository.delete(id))?.affected > 0;
   }
 }
