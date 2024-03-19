@@ -1,49 +1,56 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
-import { OrmSimulation } from '../../../database/orm-simulation';
 import { Album } from './entities/album.entity';
 import { UUID } from 'crypto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AlbumService {
-  private orm = new OrmSimulation(OrmSimulation.entityTypes.Albums);
-  private trackOrm = new OrmSimulation(OrmSimulation.entityTypes.Tracks);
+  // private trackOrm = new OrmWrapper(OrmWrapper.entityTypes.Tracks);
 
-  create(createAlbumDto: CreateAlbumDto): Album {
-    return this.orm.createEntity(createAlbumDto);
+  constructor(
+    @InjectRepository(Album)
+    private albumRepository: Repository<Album>,
+  ) {}
+
+  create(createAlbumDto: CreateAlbumDto): Promise<Album> {
+    return this.albumRepository.save(createAlbumDto);
   }
 
-  findAll(): Album {
-    return this.orm.getAllEntities();
+  findAll(): Promise<Album[]> {
+    return this.albumRepository.find();
   }
 
-  findOne(id: UUID): Album {
-    return this.orm.getSingleEntity(id);
+  findOne(id: UUID): Promise<Album> {
+    return this.albumRepository.findOneBy({ id });
   }
 
-  update(
+  async update(
     id: UUID,
     updateAlbumDto: UpdateAlbumDto,
-  ): { result: HttpStatus; data?: any } {
-    const updateAlb = this.orm.updateEntity(id, updateAlbumDto);
+  ): Promise<{ result: HttpStatus; data?: any }> {
+    const result = await this.albumRepository.update(id, updateAlbumDto);
 
-    return updateAlb
-      ? { result: HttpStatus.OK, data: updateAlb }
+    console.log(updateAlbumDto);
+
+    return result.affected > 0
+      ? { result: HttpStatus.OK, data: { ...updateAlbumDto, id } }
       : { result: HttpStatus.NOT_FOUND };
   }
 
-  remove(id: UUID) {
-    const result = this.orm.removeEntity(id);
+  async remove(id: UUID) {
+    const result = await this.albumRepository.delete(id);
+    console.log(result);
 
-    if (result) {
-      const track = this.trackOrm.getSingleEntityByCustomId('albumId', id);
-
-      if (track) {
-        track.albumId = null;
-      }
+    if (result.affected > 0) {
+      // const track = this.trackOrm.getSingleEntityByCustomId('albumId', id);
+      // if (track) {
+      //   track.albumId = null;
+      // }
     }
 
-    return result;
+    return result.affected > 0;
   }
 }

@@ -1,23 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { UUID } from 'crypto';
-import { OrmSimulation } from '../../../database/orm-simulation';
+import { OrmWrapper } from '../../../database/orm-wrapper';
 import { CollectionTypes } from '../../core/enums/collection-types';
 import { FavItem } from './entities/favorite.entity';
 
 @Injectable()
 export class FavoritesService {
-  private favsOrm = new OrmSimulation(OrmSimulation.entityTypes.Favorites);
+  private favsOrm = new OrmWrapper(OrmWrapper.entityTypes.Favorites);
 
   private orms = {
-    [CollectionTypes.Artists]: new OrmSimulation(
-      OrmSimulation.entityTypes.Artists,
-    ),
-    [CollectionTypes.Albums]: new OrmSimulation(
-      OrmSimulation.entityTypes.Albums,
-    ),
-    [CollectionTypes.Tracks]: new OrmSimulation(
-      OrmSimulation.entityTypes.Tracks,
-    ),
+    [CollectionTypes.Artists]: new OrmWrapper(OrmWrapper.entityTypes.Artists),
+    [CollectionTypes.Albums]: new OrmWrapper(OrmWrapper.entityTypes.Albums),
+    [CollectionTypes.Tracks]: new OrmWrapper(OrmWrapper.entityTypes.Tracks),
   };
 
   findAll() {

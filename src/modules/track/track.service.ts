@@ -2,12 +2,12 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
-import { OrmSimulation } from '../../../database/orm-simulation';
+import { OrmWrapper } from '../../../database/orm-wrapper';
 import { UUID } from 'crypto';
 
 @Injectable()
 export class TrackService {
-  private orm = new OrmSimulation(OrmSimulation.entityTypes.Tracks);
+  private orm = new OrmWrapper(OrmWrapper.entityTypes.Tracks);
 
   create(createTrackDto: CreateTrackDto): Track {
     return this.orm.createEntity(createTrackDto);
