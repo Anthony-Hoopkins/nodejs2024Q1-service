@@ -1,0 +1,15 @@
+export const ErrorMessageDictionary = {
+  required: 'Property is required',
+  badRequest: 'Bad request',
+  invalidId: 'Id is invalid',
+  notFound: 'Entity not found',
+  noContent: 'No Content',
+  wrongPassword: 'Wrong password',
+  haveToBeNumber: 'Have to be a number',
+  haveToBeString: 'Have to be a string',
+  haveToBeBoolean: 'Have to be a boolean',
+  haveToBeUUID: 'Have to be a UUID',
+  incorrectUserCredentials: 'Incorrect user credentials',
+  somethingWrong: 'Something went wrong',
+  unprocessableEntity: 'Unprocessable Entity',
+};

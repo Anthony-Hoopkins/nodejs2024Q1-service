@@ -17,21 +17,28 @@ git clone {repository URL}
 npm install
 ```
 
-## Running application
+### Rename ".env.example" to ".env" or just use current
+
+## Run application
 
 ```
 npm start
 ```
 
 After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
+in your browser OpenAPI documentation by typing http://localhost:4000/docs.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
+
+## Docs Swagger
+
+open http://localhost:4000/docs
+
 
 ## Testing
 
 After application running open new terminal and enter:
 
-To run all tests without authorization
+To run all tests without authorization (for current part 1)
 
 ```
 npm run test
