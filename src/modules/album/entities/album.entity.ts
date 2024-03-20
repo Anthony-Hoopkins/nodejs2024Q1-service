@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { UUID } from 'crypto';
 import { exampleUUID } from '../../../core/consts/misc';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { AbstractDefaultEntity } from '../../../core/common-entities/abstract-default.entity';
+import { Artist } from '../../artist/entities/artist.entity';
 
 @Entity()
 export class Album extends AbstractDefaultEntity {
@@ -15,8 +15,20 @@ export class Album extends AbstractDefaultEntity {
   year: number;
 
   @ApiProperty({ example: exampleUUID, description: 'Uniq Artist ID' })
-  @Column({ type: 'uuid', nullable: true })
-  artistId: UUID | null; // refers to Artist
+  // @ManyToOne(() => Artist, null, { onDelete: 'SET NULL' })
+  @OneToOne(() => Artist)
+  @JoinColumn({ name: 'artistId' })
+  artist: Artist;
+
+  @Column({ nullable: true })
+  artistId: string | null;
+
+  // @OneToOne(() => Artist)
+  // @JoinColumn()
+  // artist: Artist;
+
+  // @Column({ type: 'uuid', nullable: true })
+  // artistId: UUID | null; // refers to Artist
 
   constructor() {
     super();

@@ -1,13 +1,17 @@
 import { CollectionTypes } from '../../../core/enums/collection-types';
 import { UUID } from 'crypto';
 import { ApiProperty } from '@nestjs/swagger';
+import { ManyToOne } from 'typeorm';
+import { Artist } from '../../artist/entities/artist.entity';
 
 export class Favorite {
   @ApiProperty({
     example: ['Shakira', '50 Cent'],
     description: 'Favorite artists',
   })
-  artists: string[]; // favorite artists ids
+  @ManyToOne(() => Artist, null, { onDelete: 'CASCADE' })
+  artist: Artist;
+  // artists: string[]; // favorite artists ids
 
   @ApiProperty({
     example: ['Go to the horizon', 'Whats up'],

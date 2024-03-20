@@ -9,20 +9,19 @@ import { TrackService } from '../track/track.service';
 
 @Injectable()
 export class AlbumService {
-  // private trackOrm = new OrmWrapper(OrmWrapper.entityTypes.Tracks);
-
   constructor(
     @InjectRepository(Album)
     private albumRepository: Repository<Album>,
     private readonly trackService: TrackService,
-  ) {}
+  ) {
+  }
 
   create(createAlbumDto: CreateAlbumDto): Promise<Album> {
     return this.albumRepository.save(createAlbumDto);
   }
 
   findAll(): Promise<Album[]> {
-    return this.albumRepository.find();
+    return this.albumRepository.find({ relations: ['artist'] });
   }
 
   findOne(id: UUID): Promise<Album> {
@@ -33,21 +32,31 @@ export class AlbumService {
     id: UUID,
     updateAlbumDto: UpdateAlbumDto,
   ): Promise<{ result: HttpStatus; data?: any }> {
-    const result = await this.albumRepository.update(id, updateAlbumDto);
+    const artistId = updateAlbumDto.artistId;
+    delete updateAlbumDto.artistId;
+
+    const result = await this.albumRepository.update(id, { ...updateAlbumDto, artist: artistId });
 
     return result.affected > 0
-      ? { result: HttpStatus.OK, data: { ...updateAlbumDto, id } }
+      ? { result: HttpStatus.OK, data: { ...updateAlbumDto, id, artistId } }
       : { result: HttpStatus.NOT_FOUND };
   }
 
   async remove(id: UUID) {
-    const result = await this.albumRepository.delete(id);
-    console.log(result);
+    const isExist = await this.albumRepository.existsBy({ id });
 
-    if (result.affected > 0) {
+    if (isExist) {
       await this.trackService.setPropAsNull('albumId', id);
+      const result = await this.albumRepository.delete(id);
+      return result.affected > 0;
     }
 
-    return result.affected > 0;
+    return false;
+  }
+
+  setPropAsNull(propName: string, idToDelete: UUID): void {
+    this.albumRepository.update(
+      { [propName]: idToDelete }, { [propName]: null }
+    );
   }
 }

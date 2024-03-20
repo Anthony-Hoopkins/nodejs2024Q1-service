@@ -14,31 +14,28 @@ export class TrackService {
   }
 
   create(createTrackDto: CreateTrackDto): Promise<Track> {
-    return this.trackRepository.save(createTrackDto);
+    return this.trackRepository.save({ ...createTrackDto });
   }
 
   findAll(): Promise<Track[]> {
-    return this.trackRepository.find();
+    return this.trackRepository.find({ relations: ['album', 'artist'] });
   }
 
   findOne(id: UUID): Promise<Track> {
-    return this.trackRepository.findOneBy({ id });
+    return this.trackRepository.findOne({ where: { id }});
   }
 
-  async setPropAsNull(propName: string, id: UUID): Promise<void> {
-    const track = await this.trackRepository.findOneBy({ [propName]: id });
-
-
-    if (track) {
-      await this.update(track.id as UUID, { [propName]: null } as UpdateTrackDto);
-    }
+  async setPropAsNull(propName: string, idToDelete: UUID): Promise<void> {
+    await this.trackRepository.update({ [propName]: idToDelete }, { [propName]: null });
   }
 
   async update(
     id: UUID,
     updateTrackDto: UpdateTrackDto,
   ): Promise<{ result: HttpStatus; data?: any }> {
-    const result = await this.trackRepository.update(id, updateTrackDto);
+    const result = await this.trackRepository.update(id,
+      updateTrackDto,
+    );
 
     return result.affected > 0
       ? { result: HttpStatus.OK, data: { ...updateTrackDto, id } }

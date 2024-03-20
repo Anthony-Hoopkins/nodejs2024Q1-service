@@ -8,7 +8,7 @@
 ## Downloading
 
 ```
-git clone {repository URL}
+git clone https://github.com/Anthony-Hoopkins/nodejs2024Q1-service/pull/2
 ```
 
 ## Installing NPM modules

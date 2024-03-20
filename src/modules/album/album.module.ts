@@ -6,8 +6,12 @@ import { Album } from './entities/album.entity';
 import { TrackModule } from '../track/track.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Album]), forwardRef(() => TrackModule)],
+  imports: [
+    TypeOrmModule.forFeature([Album]),
+    forwardRef(() => TrackModule),
+  ],
   controllers: [AlbumController],
   providers: [AlbumService],
+  exports: [AlbumService],
 })
 export class AlbumModule {}

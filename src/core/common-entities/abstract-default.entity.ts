@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { CreateDateColumn, Entity, UpdateDateColumn } from 'typeorm';
 import { BaseEntity } from './base.entity';
 
+@Entity()
 export class AbstractDefaultEntity extends BaseEntity {
   @ApiProperty({
     example: '2024-03-18T10:22:02.717Z',

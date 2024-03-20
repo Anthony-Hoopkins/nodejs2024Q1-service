@@ -5,16 +5,18 @@ import { UUID } from 'crypto';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { TrackService } from '../track/track.service';
+import { AlbumService } from '../album/album.service';
 
 @Injectable()
 export class ArtistService {
-  // private albumOrm = new OrmWrapper(OrmWrapper.entityTypes.Albums);
-  // private trackOrm = new OrmWrapper(OrmWrapper.entityTypes.Tracks);
-
   constructor(
     @InjectRepository(Artist)
     private artistsRepository: Repository<Artist>,
-  ) {}
+    private trackService: TrackService,
+    private albumService: AlbumService,
+  ) {
+  }
 
   create(createArtistDto: CreateArtistDto): Promise<Artist> {
     return this.artistsRepository.save(createArtistDto);
@@ -42,22 +44,23 @@ export class ArtistService {
   }
 
   async remove(id: UUID): Promise<boolean> {
-    const result = await this.artistsRepository.delete(id);
+    const isExist = await this.artistsRepository.existsBy({ id });
 
-    if (result.affected > 0) {
-      // const album = this.albumOrm.getSingleEntityByCustomId('artistId', id); // todo
-      //
-      // const track = this.trackOrm.getSingleEntityByCustomId('artistId', id);
-      //
-      // if (album) {
-      //   album.artistId = null;
-      // }
-      //
-      // if (track) {
-      //   track.artistId = null;
-      // }
+    if (isExist) {
+      try {
+
+        await this.albumService.setPropAsNull('artistId', id);
+        await this.trackService.setPropAsNull('artistId', id);
+
+        const result = await this.artistsRepository.delete(id);
+
+        return result.affected > 0;
+      } catch {
+        await this.artistsRepository.delete(id);
+        return true;
+      }
     }
 
-    return result.affected > 0;
+    return false;
   }
 }
