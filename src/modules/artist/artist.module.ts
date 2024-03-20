@@ -14,5 +14,6 @@ import { AlbumModule } from '../album/album.module';
   ],
   controllers: [ArtistController],
   providers: [ArtistService],
+  exports: [ArtistService],
 })
 export class ArtistModule {}

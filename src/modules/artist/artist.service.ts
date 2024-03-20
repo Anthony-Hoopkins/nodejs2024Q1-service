@@ -5,16 +5,12 @@ import { UUID } from 'crypto';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { TrackService } from '../track/track.service';
-import { AlbumService } from '../album/album.service';
 
 @Injectable()
 export class ArtistService {
   constructor(
     @InjectRepository(Artist)
     private artistsRepository: Repository<Artist>,
-    private trackService: TrackService,
-    private albumService: AlbumService,
   ) {
   }
 
@@ -44,23 +40,24 @@ export class ArtistService {
   }
 
   async remove(id: UUID): Promise<boolean> {
-    const isExist = await this.artistsRepository.existsBy({ id });
+    const result = await this.artistsRepository.delete(id);
+    return result.affected > 0;
 
-    if (isExist) {
-      try {
+    // const isExist = await this.artistsRepository.existsBy({ id });
 
-        await this.albumService.setPropAsNull('artistId', id);
-        await this.trackService.setPropAsNull('artistId', id);
+    // if (isExist) {
+    //   try {
+    //
+    //     // await this.albumService.setPropAsNull('artistId', id);
+    //     // await this.trackService.setPropAsNull('artistId', id);
+    //
+    //
+    //   } catch {
+    //     await this.artistsRepository.delete(id);
+    //     return true;
+    //   }
+    // }
 
-        const result = await this.artistsRepository.delete(id);
-
-        return result.affected > 0;
-      } catch {
-        await this.artistsRepository.delete(id);
-        return true;
-      }
-    }
-
-    return false;
+    // return false;
   }
 }

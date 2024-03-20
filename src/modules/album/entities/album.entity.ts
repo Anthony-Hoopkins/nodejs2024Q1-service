@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { exampleUUID } from '../../../core/consts/misc';
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { AbstractDefaultEntity } from '../../../core/common-entities/abstract-default.entity';
 import { Artist } from '../../artist/entities/artist.entity';
 
@@ -15,8 +15,8 @@ export class Album extends AbstractDefaultEntity {
   year: number;
 
   @ApiProperty({ example: exampleUUID, description: 'Uniq Artist ID' })
-  // @ManyToOne(() => Artist, null, { onDelete: 'SET NULL' })
-  @OneToOne(() => Artist)
+  @ManyToOne(() => Artist, { onDelete: 'SET NULL' })
+  // @OneToOne(() => Artist)
   @JoinColumn({ name: 'artistId' })
   artist: Artist;
 

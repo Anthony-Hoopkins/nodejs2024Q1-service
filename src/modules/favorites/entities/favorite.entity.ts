@@ -1,32 +1,38 @@
-import { CollectionTypes } from '../../../core/enums/collection-types';
-import { UUID } from 'crypto';
-import { ApiProperty } from '@nestjs/swagger';
-import { ManyToOne } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn } from 'typeorm';
 import { Artist } from '../../artist/entities/artist.entity';
+import { Album } from '../../album/entities/album.entity';
+import { Track } from '../../track/entities/track.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
+@Entity()
 export class Favorite {
+  @PrimaryColumn({ type: 'uuid' })
+  id: string;
+
+  @Column()
+  name: string;
+
   @ApiProperty({
     example: ['Shakira', '50 Cent'],
     description: 'Favorite artists',
   })
-  @ManyToOne(() => Artist, null, { onDelete: 'CASCADE' })
-  artist: Artist;
-  // artists: string[]; // favorite artists ids
+  @ManyToMany(() => Artist)
+  @JoinTable()
+  artists: Artist[];
 
   @ApiProperty({
     example: ['Go to the horizon', 'Whats up'],
     description: 'Favorite Albums',
   })
-  albums: string[]; // favorite albums ids
+  @ManyToMany(() => Album)
+  @JoinTable()
+  albums: Album[];
 
   @ApiProperty({
     example: ['Walk by railways to South', 'Story about'],
     description: 'Favorite Tracks',
   })
-  tracks: string[]; // favorite tracks ids
+  @ManyToMany(() => Track)
+  @JoinTable()
+  tracks: Track[];
 }
-
-export type FavItem = {
-  type: CollectionTypes;
-  id: UUID;
-};

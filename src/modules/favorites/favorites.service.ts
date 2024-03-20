@@ -1,21 +1,38 @@
 import { Injectable } from '@nestjs/common';
 import { UUID } from 'crypto';
-import { OrmWrapper } from '../../../database/orm-wrapper';
 import { CollectionTypes } from '../../core/enums/collection-types';
-import { FavItem } from './entities/favorite.entity';
+import { Favorite } from './entities/favorite.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ReturnFavoriteDto } from './dto/return-favorite.dto';
+import { ArtistService } from '../artist/artist.service';
+import { TrackService } from '../track/track.service';
+import { AlbumService } from '../album/album.service';
 
 @Injectable()
 export class FavoritesService {
-  private favsOrm = new OrmWrapper(OrmWrapper.entityTypes.Favorites);
+  constructor(
+    @InjectRepository(Favorite)
+    private favoriteRepository: Repository<Favorite>,
+    private artistService: ArtistService,
+    private albumService: AlbumService,
+    private trackService: TrackService,
+  ) {
+  }
 
-  private orms = {
-    [CollectionTypes.Artists]: new OrmWrapper(OrmWrapper.entityTypes.Artists),
-    [CollectionTypes.Albums]: new OrmWrapper(OrmWrapper.entityTypes.Albums),
-    [CollectionTypes.Tracks]: new OrmWrapper(OrmWrapper.entityTypes.Tracks),
+  private services = {
+    [CollectionTypes.Artists]: this.artistService,
+    [CollectionTypes.Albums]: this.albumService,
+    [CollectionTypes.Tracks]: this.trackService,
   };
 
-  findAll() {
-    const collection: FavItem[] = this.favsOrm.getAllEntities();
+  async findById(id?: string): Promise<any> { // for different favs
+    const favorites = await this.favoriteRepository.findOne({ where: { id }, relations: ['artists', 'albums', 'tracks'] });
+    return favorites[0];
+  }
+
+  async findAll(): Promise<ReturnFavoriteDto> {
+    const favorites = (await this.favoriteRepository.find({ relations: ['artists', 'albums', 'tracks'] }))[0];
 
     const initCollection = {
       [CollectionTypes.Artists]: [],
@@ -23,34 +40,48 @@ export class FavoritesService {
       [CollectionTypes.Tracks]: [],
     };
 
-    collection.forEach((item: FavItem) => {
-      const singleEntity = this.orms[item.type].getSingleEntity(item.id);
-
-      if (singleEntity) {
-        initCollection[item.type].push(
-          this.handleSingleEntity(item.type, singleEntity),
-        ); // fix for tests pass
+    Object.keys(initCollection).forEach((key: CollectionTypes) => {
+      if (favorites[key]?.length > 0) {
+        favorites[key].forEach((entity) => {
+          initCollection[key].push(
+            this.handleSingleEntity(key, entity),
+          );
+        });
       }
     });
 
     return initCollection;
   }
 
-  addEntity(type: CollectionTypes, id: UUID) {
-    const singleEntity = this.orms[type].getSingleEntity(id);
+  async addEntity(type: CollectionTypes, id: UUID): Promise<any | null> {
+    const singleEntity = await this.services[type].findOne(id);
 
     if (singleEntity) {
-      return this.favsOrm.setEntityToCollection({ type, id });
+      const favorite = (await this.favoriteRepository.find({ relations: [type] }))[0];
+      favorite[type].push(singleEntity as any);
+      await this.favoriteRepository.save(favorite);
+
+      return this.handleSingleEntity(type, singleEntity);
     } else {
       return null;
     }
   }
 
-  remove(id: UUID): boolean {
-    return this.favsOrm.removeEntity(id);
+  async remove(type: CollectionTypes, id: UUID): Promise<boolean> {
+    const favorite = (await this.favoriteRepository.find({ relations: [type] }))[0];
+    const entityIndex = favorite[type].findIndex(artist => artist.id === id);
+
+    if (entityIndex !== -1) {
+      favorite[type].splice(entityIndex, 1);
+      await this.favoriteRepository.save(favorite);
+
+      return true;
+    }
+
+    return false;
   }
 
-  private handleSingleEntity(type: CollectionTypes, entity: any) {
+  private handleSingleEntity(type: CollectionTypes, entity: any): { [key: string]: unknown } {
     if (type === CollectionTypes.Artists) {
       return { grammy: entity.grammy, id: entity.id, name: entity.name };
     }
@@ -75,5 +106,9 @@ export class FavoritesService {
     }
 
     return entity;
+  }
+
+  init() { // todo must create migration !!!!
+    this.favoriteRepository.save({ name: 'first' }).then();
   }
 }

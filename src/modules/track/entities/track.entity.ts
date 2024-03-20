@@ -12,7 +12,7 @@ export class Track extends AbstractDefaultEntity {
   name: string;
 
   @ApiProperty({ example: exampleUUID, description: 'Uniq Artist ID' })
-  @ManyToOne(() => Artist)
+  @ManyToOne(() => Artist, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'artistId' }) // bind to column artistId
   artist: Artist; // refers to Artist Entity
 
@@ -22,7 +22,7 @@ export class Track extends AbstractDefaultEntity {
 
   @ApiProperty({ example: exampleUUID, description: 'Uniq Album ID' })
   // @OneToOne(() => Album)
-  @ManyToOne(() => Album)
+  @ManyToOne(() => Album, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'albumId' }) // Specify the name of the column for the foreign key
   album: Album; // Define a property to store the foreign key
 

@@ -5,14 +5,12 @@ import { UUID } from 'crypto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { TrackService } from '../track/track.service';
 
 @Injectable()
 export class AlbumService {
   constructor(
     @InjectRepository(Album)
     private albumRepository: Repository<Album>,
-    private readonly trackService: TrackService,
   ) {
   }
 
@@ -43,7 +41,10 @@ export class AlbumService {
   }
 
   async remove(id: UUID) {
-    const isExist = await this.albumRepository.existsBy({ id });
+    const result = await this.albumRepository.delete(id);
+    return result.affected > 0;
+
+   /* const isExist = await this.albumRepository.existsBy({ id });
 
     if (isExist) {
       await this.trackService.setPropAsNull('albumId', id);
@@ -51,7 +52,7 @@ export class AlbumService {
       return result.affected > 0;
     }
 
-    return false;
+    return false;*/
   }
 
   setPropAsNull(propName: string, idToDelete: UUID): void {
