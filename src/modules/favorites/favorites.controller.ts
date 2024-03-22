@@ -32,13 +32,6 @@ export class FavoritesController {
     return this.favoritesService.findAll();
   }
 
-  @Post()
-  @ApiOperation({ summary: 'Add artist to the favorites' })
-  @ApiResponse({ status: HttpStatus.CREATED, description: 'created' })
-  init() {
-    return this.favoritesService.init();
-  }
-
   @Post('artist/:id')
   @ApiOperation({ summary: 'Add artist to the favorites' })
   @ApiResponse({ status: HttpStatus.CREATED, description: 'created' })

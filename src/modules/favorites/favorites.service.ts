@@ -107,8 +107,4 @@ export class FavoritesService {
 
     return entity;
   }
-
-  init() { // todo must create migration !!!!
-    this.favoriteRepository.save({ name: 'first' }).then();
-  }
 }
