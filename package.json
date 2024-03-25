@@ -28,6 +28,10 @@
     "migration:show": "typeorm migration:show -d dist/src/orm/orm.config.js",
     "migration:create": "typeorm migration:create src/orm/migrations",
 
+    "vulnerability-scan": "npm audit",
+    "docker-scan": "docker scan",
+    "vulnerability-fix": "npm audit fix",
+
     "typeorm": "ts-node ./node_modules/typeorm/cli",
     "typeorm:run-migrations": "npm run typeorm migration:run -- -d ./src/orm/orm.config.ts",
     "typeorm:generate-migration": "npm run typeorm -- -d ./src/orm/orm.config.ts migration:generate ./migrations/$npm_config_name",

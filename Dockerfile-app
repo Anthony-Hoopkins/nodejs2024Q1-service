@@ -8,6 +8,9 @@ RUN npm install
 
 COPY . .
 
+# Run npm audit for vulnerability scanning
+# RUN npm audit
+
 COPY ./dist ./dist
 
 CMD ["npm", "run", "start:dev"]
