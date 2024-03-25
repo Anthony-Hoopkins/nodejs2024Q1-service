@@ -1,7 +1,7 @@
 import { DATABASE, EntityTypes } from './database';
 import { UUID } from 'crypto';
 
-export class OrmSimulation {
+export class OrmWrapper {
   static entityTypes = EntityTypes;
   type: EntityTypes;
 

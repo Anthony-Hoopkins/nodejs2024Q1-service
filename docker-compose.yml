@@ -1,0 +1,66 @@
+version: '3.0'
+services:
+
+  postgres_homelib:
+    container_name: postgres_homelib
+    image: postgres:15
+    env_file:
+      - .env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - pgdata:/var/lib/postgresql/data  # Mount volume for database files
+      - ./logs:/var/lib/postgresql/logs  # Mount volume for logs
+    networks:
+      - user_network
+
+  app:
+    container_name: app
+    build:
+      context: .
+      dockerfile: Dockerfile-app
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "4000:4000"
+    restart: always
+    depends_on:
+      - postgres_homelib
+    healthcheck:
+      test: [ "CMD-SHELL"]  # "pg_isready"
+      interval: 1s
+      timeout: 5s
+      retries: 5
+    networks:
+      - user_network
+
+
+networks:
+  user_network:
+    driver: bridge
+
+volumes:
+  pgdata:
+
+    #    command: bash -c "npm run migration:run && npm run start:dev"
+
+
+    #    build:
+    #      context: .
+    #      dockerfile: Dockerfile-db
+
+    #    logging:
+    #      driver: none
+    #    volumes:
+    #      - ./data:/var/lib/postgresql/data
+    #      - ./logs:/var/lib/postgresql/logs
+
+
+#volumes:
+#  pgdata:

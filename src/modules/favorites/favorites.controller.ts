@@ -35,8 +35,8 @@ export class FavoritesController {
   @Post('artist/:id')
   @ApiOperation({ summary: 'Add artist to the favorites' })
   @ApiResponse({ status: HttpStatus.CREATED, description: 'created' })
-  addArtist(@Param('id', ParseUUIDPipe) id: UUID) {
-    const result = this.favoritesService.addEntity(CollectionTypes.Artists, id);
+  async addArtist(@Param('id', ParseUUIDPipe) id: UUID) {
+    const result = await this.favoritesService.addEntity(CollectionTypes.Artists, id);
 
     this.handleResult(result);
   }
@@ -52,14 +52,14 @@ export class FavoritesController {
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   removeArtist(@Param('id', ParseUUIDPipe) id: UUID) {
-    return this.favoritesService.remove(id);
+    return this.favoritesService.remove(CollectionTypes.Artists, id);
   }
 
   @Post('album/:id')
   @ApiOperation({ summary: 'Add album to the favorites' })
   @ApiResponse({ status: HttpStatus.CREATED })
-  addAlbum(@Param('id', ParseUUIDPipe) id: UUID) {
-    const result = this.favoritesService.addEntity(CollectionTypes.Albums, id);
+  async addAlbum(@Param('id', ParseUUIDPipe) id: UUID) {
+    const result = await this.favoritesService.addEntity(CollectionTypes.Albums, id);
 
     this.handleResult(result);
   }
@@ -75,14 +75,14 @@ export class FavoritesController {
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   removeAlbum(@Param('id', ParseUUIDPipe) id: UUID) {
-    return this.favoritesService.remove(id);
+    return this.favoritesService.remove(CollectionTypes.Albums, id);
   }
 
   @Post('track/:id')
   @ApiOperation({ summary: 'Add track to the favorites' })
   @ApiResponse({ status: HttpStatus.CREATED })
-  addTrack(@Param('id', ParseUUIDPipe) id: UUID) {
-    const result = this.favoritesService.addEntity(CollectionTypes.Tracks, id);
+  async addTrack(@Param('id', ParseUUIDPipe) id: UUID) {
+    const result = await this.favoritesService.addEntity(CollectionTypes.Tracks, id);
 
     this.handleResult(result);
   }
@@ -98,7 +98,7 @@ export class FavoritesController {
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   removeTrack(@Param('id', ParseUUIDPipe) id: UUID) {
-    return this.favoritesService.remove(id);
+    return this.favoritesService.remove(CollectionTypes.Tracks, id);
   }
 
   private handleResult(result: any) {

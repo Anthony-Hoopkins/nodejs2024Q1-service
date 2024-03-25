@@ -4,25 +4,22 @@
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+- Docker - [https://docs.docker.com/engine/install/]
+- Docker-compose - [https://docs.docker.com/compose/install/]
 
 ## Downloading
 
 ```
-git clone {repository URL}
-```
-
-## Installing NPM modules
-
-```
-npm install
+git clone https://github.com/Anthony-Hoopkins/nodejs2024Q1-service/pull/2
 ```
 
 ### Rename ".env.example" to ".env" or just use current
 
-## Run application
+## Run docker-compose:
+open terminal in root folder and run:
 
 ```
-npm start
+docker-compose up -d --build
 ```
 
 After starting the app on port (4000 as default) you can open
@@ -44,6 +41,18 @@ To run all tests without authorization (for current part 1)
 npm run test
 ```
 
+
+## Installing NPM modules
+if you want to use app locally: open terminal in root folder and run (but you need to up DB and change POSTGRES_HOST to POSTGRES_HOST=localhost in .env):
+
+```
+npm install
+```
+
+##### end of 2-nd task responsibility 
+
+
+--------------- 
 To run only one of all test suites
 
 ```

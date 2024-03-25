@@ -23,7 +23,20 @@
     "test:refresh": "cross-env TEST_MODE=auth jest --testPathPattern refresh.e2e.spec.ts --noStackTrace --runInBand",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "migration:run": "typeorm migration:run -d dist/src/orm/orm.config.js",
+    "migration:show": "typeorm migration:show -d dist/src/orm/orm.config.js",
+    "migration:create": "typeorm migration:create src/orm/migrations",
+
+    "vulnerability-scan": "npm audit",
+    "docker-scan": "docker scan",
+    "vulnerability-fix": "npm audit fix",
+
+    "typeorm": "ts-node ./node_modules/typeorm/cli",
+    "typeorm:run-migrations": "npm run typeorm migration:run -- -d ./src/orm/orm.config.ts",
+    "typeorm:generate-migration": "npm run typeorm -- -d ./src/orm/orm.config.ts migration:generate ./migrations/$npm_config_name",
+    "typeorm:create-migration": "npm run typeorm -- migration:create ./migrations/$npm_config_name",
+    "typeorm:revert-migration": "npm run typeorm -- -d ./src/orm/orm.config.ts migration:revert"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
@@ -33,15 +46,18 @@
     "@nestjs/mapped-types": "^1.0.1",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^7.3.0",
-    "cross-env": "^7.0.3",
-    "bcrypt": "^5.0.1",
+    "@nestjs/typeorm": "9.0.1",
+    "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "0.14.1",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.0.1",
     "http-status-codes": "^2.2.0",
+    "pg": "^8.11.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
+    "typeorm": "^0.3.20",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

@@ -38,23 +38,27 @@ export class UserController {
   @Post()
   @ApiOperation({ summary: 'Create User' })
   @ApiResponse({ status: HttpStatus.CREATED, type: User })
-  create(@Body() createUserDto: CreateUserDto) {
-    return new User(this.userService.create(createUserDto));
+  async create(@Body() createUserDto: CreateUserDto) {
+    return new User(await this.userService.create(createUserDto));
   }
 
   @Get()
   @ApiOperation({ summary: 'Get All Users' })
   @ApiResponse({ status: HttpStatus.OK, type: [User] })
-  findAll() {
-    const allUsers: User[] = this.userService.findAll();
+  // findAll() {
+  //   const allUsers: User[] = this.userService.findAll();
+  //   return allUsers.map((user: User) => new User(user));
+  // }
+  async findAll() {
+    const allUsers: User[] = await this.userService.findAll();
     return allUsers.map((user: User) => new User(user));
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get User by Id' })
   @ApiResponse({ status: HttpStatus.OK, type: User })
-  findOne(@Param('id', ParseUUIDPipe) id: UUID) {
-    const user = this.userService.findOne(id);
+  async findOne(@Param('id', ParseUUIDPipe) id: UUID) {
+    const user = await this.userService.findOne(id);
 
     if (user) {
       return new User(user);
@@ -74,11 +78,11 @@ export class UserController {
     description: ErrorMessageDictionary.wrongPassword,
   })
   @HttpCode(HttpStatus.OK)
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: UUID,
     @Body() updateDto: UpdateUserDto,
-  ): User {
-    const result = this.userService.update(id, updateDto);
+  ): Promise<User> {
+    const result = await this.userService.update(id, updateDto);
 
     switch (result.result) {
       case HttpStatus.OK:
@@ -103,10 +107,10 @@ export class UserController {
     description: ErrorMessageDictionary.noContent,
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', ParseUUIDPipe) id: UUID): void {
-    const user = this.userService.remove(id);
+  async remove(@Param('id', ParseUUIDPipe) id: UUID): Promise<void> {
+    const result = await this.userService.remove(id);
 
-    if (user) {
+    if (result) {
       return;
     }
 

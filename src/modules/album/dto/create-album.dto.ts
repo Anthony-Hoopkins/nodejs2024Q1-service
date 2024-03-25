@@ -2,7 +2,7 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { ErrorMessageDictionary } from '../../../core/consts/error.dictionary';
 import { UUID } from 'crypto';
 import { ApiProperty } from '@nestjs/swagger';
-import { randomUUID } from '../../../core/consts/misc';
+import { exampleUUID } from '../../../core/consts/misc';
 
 export class CreateAlbumDto {
   @ApiProperty({ example: 'The best Album', description: 'Name' })
@@ -15,6 +15,6 @@ export class CreateAlbumDto {
   @IsNumber({}, { message: ErrorMessageDictionary.haveToBeNumber })
   year: number;
 
-  @ApiProperty({ example: randomUUID, description: 'Artist Id' })
+  @ApiProperty({ example: exampleUUID, description: 'Artist Id' })
   artistId: UUID | null;
 }

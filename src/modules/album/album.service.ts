@@ -1,49 +1,63 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
-import { OrmSimulation } from '../../../database/orm-simulation';
 import { Album } from './entities/album.entity';
 import { UUID } from 'crypto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AlbumService {
-  private orm = new OrmSimulation(OrmSimulation.entityTypes.Albums);
-  private trackOrm = new OrmSimulation(OrmSimulation.entityTypes.Tracks);
-
-  create(createAlbumDto: CreateAlbumDto): Album {
-    return this.orm.createEntity(createAlbumDto);
+  constructor(
+    @InjectRepository(Album)
+    private albumRepository: Repository<Album>,
+  ) {
   }
 
-  findAll(): Album {
-    return this.orm.getAllEntities();
+  create(createAlbumDto: CreateAlbumDto): Promise<Album> {
+    return this.albumRepository.save(createAlbumDto);
   }
 
-  findOne(id: UUID): Album {
-    return this.orm.getSingleEntity(id);
+  findAll(): Promise<Album[]> {
+    return this.albumRepository.find({ relations: ['artist'] });
   }
 
-  update(
+  findOne(id: UUID): Promise<Album> {
+    return this.albumRepository.findOneBy({ id });
+  }
+
+  async update(
     id: UUID,
     updateAlbumDto: UpdateAlbumDto,
-  ): { result: HttpStatus; data?: any } {
-    const updateAlb = this.orm.updateEntity(id, updateAlbumDto);
+  ): Promise<{ result: HttpStatus; data?: any }> {
+    const artistId = updateAlbumDto.artistId;
+    delete updateAlbumDto.artistId;
 
-    return updateAlb
-      ? { result: HttpStatus.OK, data: updateAlb }
+    const result = await this.albumRepository.update(id, { ...updateAlbumDto, artist: artistId });
+
+    return result.affected > 0
+      ? { result: HttpStatus.OK, data: { ...updateAlbumDto, id, artistId } }
       : { result: HttpStatus.NOT_FOUND };
   }
 
-  remove(id: UUID) {
-    const result = this.orm.removeEntity(id);
+  async remove(id: UUID) {
+    const result = await this.albumRepository.delete(id);
+    return result.affected > 0;
 
-    if (result) {
-      const track = this.trackOrm.getSingleEntityByCustomId('albumId', id);
+   /* const isExist = await this.albumRepository.existsBy({ id });
 
-      if (track) {
-        track.albumId = null;
-      }
+    if (isExist) {
+      await this.trackService.setPropAsNull('albumId', id);
+      const result = await this.albumRepository.delete(id);
+      return result.affected > 0;
     }
 
-    return result;
+    return false;*/
+  }
+
+  setPropAsNull(propName: string, idToDelete: UUID): void {
+    this.albumRepository.update(
+      { [propName]: idToDelete }, { [propName]: null }
+    );
   }
 }

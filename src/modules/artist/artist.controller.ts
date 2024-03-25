@@ -35,22 +35,22 @@ export class ArtistController {
   @Post()
   @ApiOperation({ summary: 'Create Artist' })
   @ApiResponse({ status: HttpStatus.CREATED, type: Artist })
-  create(@Body() createArtistDto: CreateArtistDto) {
+  async create(@Body() createArtistDto: CreateArtistDto) {
     return this.artistService.create(createArtistDto);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get All Artists' })
   @ApiResponse({ status: HttpStatus.OK, type: [Artist] })
-  findAll() {
+  async findAll() {
     return this.artistService.findAll();
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get Artist by Id' })
   @ApiResponse({ status: HttpStatus.OK, type: Artist })
-  findOne(@Param('id', ParseUUIDPipe) id: UUID) {
-    const artist = this.artistService.findOne(id);
+  async findOne(@Param('id', ParseUUIDPipe) id: UUID) {
+    const artist = await this.artistService.findOne(id);
 
     if (artist) {
       return artist;
@@ -66,11 +66,11 @@ export class ArtistController {
   @ApiOperation({ summary: 'Update Artist by Id' })
   @ApiResponse({ status: HttpStatus.OK, type: Artist })
   @HttpCode(HttpStatus.OK)
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: UUID,
     @Body() updateDto: UpdateArtistDto,
-  ): Artist {
-    const result = this.artistService.update(id, updateDto);
+  ) {
+    const result = await this.artistService.update(id, updateDto);
 
     switch (result.result) {
       case HttpStatus.OK:
@@ -90,10 +90,10 @@ export class ArtistController {
     description: ErrorMessageDictionary.noContent,
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', ParseUUIDPipe) id: UUID): void {
-    const artist = this.artistService.remove(id);
+  async remove(@Param('id', ParseUUIDPipe) id: UUID): Promise<void> {
+    const isRemoved = await this.artistService.remove(id);
 
-    if (artist) {
+    if (isRemoved) {
       return;
     }
 

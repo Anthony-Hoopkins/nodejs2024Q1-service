@@ -1,14 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BaseEntity } from '../../../core/common-entities/base.entity';
+import { Column, Entity, Index } from 'typeorm';
+import { AbstractDefaultEntity } from '../../../core/common-entities/abstract-default.entity';
 
-export class Artist extends BaseEntity {
+@Entity()
+// @Index(["name", "grammy"], { unique: true })
+export class Artist extends AbstractDefaultEntity {
   @ApiProperty({ example: 'Filip K', description: 'Artist name' })
+  @Index()
+  @Column()
   name: string;
 
-  @ApiProperty({ example: true, description: 'Is hi has grammy' })
+  @ApiProperty({ example: true, description: 'Does hi have grammy' })
+  // @Index({ unique: true })
+  @Column({ type: 'boolean' })
   grammy: boolean;
-
-  constructor() {
-    super();
-  }
 }

@@ -1,55 +1,63 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import { OrmSimulation } from '../../../database/orm-simulation';
 import { Artist } from './entities/artist.entity';
 import { UUID } from 'crypto';
+import { CreateArtistDto } from './dto/create-artist.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ArtistService {
-  private orm = new OrmSimulation(OrmSimulation.entityTypes.Artists);
-  private albumOrm = new OrmSimulation(OrmSimulation.entityTypes.Albums);
-  private trackOrm = new OrmSimulation(OrmSimulation.entityTypes.Tracks);
-
-  create(createArtistDto: CreateArtistDto): Artist {
-    return this.orm.createEntity(createArtistDto);
+  constructor(
+    @InjectRepository(Artist)
+    private artistsRepository: Repository<Artist>,
+  ) {
   }
 
-  findAll(): Artist[] {
-    return this.orm.getAllEntities();
+  create(createArtistDto: CreateArtistDto): Promise<Artist> {
+    return this.artistsRepository.save(createArtistDto);
   }
 
-  findOne(id: UUID) {
-    return this.orm.getSingleEntity(id);
+  findAll(): Promise<Artist[]> {
+    return this.artistsRepository.find();
   }
 
-  update(
+  findOne(id: UUID): Promise<Artist> {
+    return this.artistsRepository.findOneBy({ id });
+  }
+
+  async update(
     id: UUID,
     updateArtistDto: UpdateArtistDto,
-  ): { result: HttpStatus; data?: any } {
-    const updateArt = this.orm.updateEntity(id, updateArtistDto);
+  ): Promise<{ result: HttpStatus; data?: any }> {
+    const result = await this.artistsRepository.update(id, updateArtistDto);
 
-    return updateArt
-      ? { result: HttpStatus.OK, data: updateArt }
-      : { result: HttpStatus.NOT_FOUND };
+    if (result.affected === 0) {
+      return { result: HttpStatus.NOT_FOUND };
+    } else {
+      return { result: HttpStatus.OK, data: await this.findOne(id) };
+    }
   }
 
-  remove(id: UUID) {
-    const result = this.orm.removeEntity(id);
+  async remove(id: UUID): Promise<boolean> {
+    const result = await this.artistsRepository.delete(id);
+    return result.affected > 0;
 
-    if (result) {
-      const album = this.albumOrm.getSingleEntityByCustomId('artistId', id);
-      const track = this.trackOrm.getSingleEntityByCustomId('artistId', id);
+    // const isExist = await this.artistsRepository.existsBy({ id });
 
-      if (album) {
-        album.artistId = null;
-      }
+    // if (isExist) {
+    //   try {
+    //
+    //     // await this.albumService.setPropAsNull('artistId', id);
+    //     // await this.trackService.setPropAsNull('artistId', id);
+    //
+    //
+    //   } catch {
+    //     await this.artistsRepository.delete(id);
+    //     return true;
+    //   }
+    // }
 
-      if (track) {
-        track.artistId = null;
-      }
-    }
-
-    return result;
+    // return false;
   }
 }

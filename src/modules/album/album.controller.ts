@@ -49,9 +49,8 @@ export class AlbumController {
   @Get(':id')
   @ApiOperation({ summary: 'Get Album by Id' })
   @ApiResponse({ status: HttpStatus.OK, type: Album })
-  @HttpCode(HttpStatus.OK)
-  findOne(@Param('id', ParseUUIDPipe) id: UUID) {
-    const album = this.albumService.findOne(id);
+  async findOne(@Param('id', ParseUUIDPipe) id: UUID) {
+    const album = await this.albumService.findOne(id);
 
     if (album) {
       return album;
@@ -67,11 +66,11 @@ export class AlbumController {
   @ApiOperation({ summary: 'Update Album by Id' })
   @ApiResponse({ status: HttpStatus.OK, type: Album })
   @HttpCode(HttpStatus.OK)
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: UUID,
     @Body() updateDto: UpdateAlbumDto,
-  ): Album {
-    const result = this.albumService.update(id, updateDto);
+  ): Promise<Album> {
+    const result = await this.albumService.update(id, updateDto);
 
     switch (result.result) {
       case HttpStatus.OK:
@@ -91,10 +90,10 @@ export class AlbumController {
     description: ErrorMessageDictionary.noContent,
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', ParseUUIDPipe) id: UUID): void {
-    const album = this.albumService.remove(id);
+  async remove(@Param('id', ParseUUIDPipe) id: UUID): Promise<void> {
+    const result = await this.albumService.remove(id);
 
-    if (album) {
+    if (result) {
       return;
     }
 
